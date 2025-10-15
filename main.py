@@ -36,16 +36,22 @@ VISION_PROMPT = (
 )
 TEXT_PROMPT = (
     "You are given detailed slide-by-slide summaries of a lecture. "
-    "Rewrite them into *concise exam study notes* that are also easy to understand "
+    "Rewrite them into *exam study notes* that are also easy to understand "
     "for someone not yet fully comfortable with the material. "
     "Important rules: "
+	"- THESE STUDY NOTES WILL BE SAVED AS A MARKDOWN FILE. SO USE MARKDOWN SYNTAX. "
+    "- FORMATTING GUIDELINES FOR MATH: Use standard Markdown LaTeX format: "
+    "  * For inline math, use single dollar signs: $formula$ (NOT \\(formula\\)) "
+    "  * For block math, use double dollar signs: $$formula$$ (NOT \\[formula\\]) "
+    "  * Never use escaped backslashes like \\( or \\[ for math delimiters "
+    "  * Always check that all math expressions are properly formatted "
     "- DO NOT mention slides, slide numbers, or page numbers. "
     "- DO NOT organize content by slide. "
     "- Keep only the essential equations, definitions, and canonical examples. "
-    "- **Add short plain-language explanations or analogies to make the math intuitive.** "
+    "- **Add short plain-language explanations or analogies to make the learning intuitive.** "
     "- Eliminate all instructions, problem statements, and filler prose. "
     "- Do not repeat concepts. "
-    "- Use clean bullet points with equations + concise explanations. "
+    "- Use clean bullet points with equations/concepts + concise explanations. "
     "- Think of it as a one-page cheat sheet that is both compact and understandable."
 )
 MAX_IMG_PIXELS = 33_000_000
