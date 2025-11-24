@@ -13,20 +13,11 @@ from dotenv import load_dotenv
 PDF_DIR = 'PDFs'
 SUMMARY_DIR = 'Summaries'
 TMP_IMG_DIR = 'tmp_slide_imgs'
-useOLLAMA = False  # Set to True to use Ollama, False for Groq
 
-# Model names and API endpoints
-if useOLLAMA:
-	OLLAMA_BASE_URL = 'http://localhost:11434/v1'
-	VISION_MODEL = 'llava:7b'
-	TEXT_MODEL = 'llama3:8b'
-	API_BASE_URL = OLLAMA_BASE_URL
-	API_KEY = 'ollama'  # Required by OpenAI client
-else:
-	VISION_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct'
-	TEXT_MODEL = 'openai/gpt-oss-20b'
-	API_BASE_URL = 'https://api.groq.com/openai/v1'
-	API_KEY = None  # Will be loaded from .env
+# Groq model names and API endpoint
+VISION_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct'
+TEXT_MODEL = 'openai/gpt-oss-20b'
+API_BASE_URL = 'https://api.groq.com/openai/v1'
 VISION_PROMPT = (
     "Provide a detailed, faithful summary of this lecture slide. "
     "Capture ALL content: equations, formulas, definitions, bullet points, and any written text. "
@@ -158,7 +149,13 @@ def process_pdf(pdf_path, client):
 	out_path = os.path.join(SUMMARY_DIR, f'{lecture_name}.md')
 	with open(out_path, 'w') as f:
 		f.write(f'# {lecture_name}\n\n')
-		f.write(lecture_notes + '\n')
+		f.write('## Study Notes\n\n')
+		f.write(lecture_notes + '\n\n')
+		f.write('---\n\n')
+		f.write('## Raw Slide Summaries\n\n')
+		for idx, summary in enumerate(slide_summaries):
+			f.write(f'### Slide {idx+1}\n\n')
+			f.write(summary.replace(f'Slide {idx+1}: ', '') + '\n\n')
 	print(f'  Output written to {out_path}')
 	# Clean up images
 	for img_path in img_paths:
@@ -169,11 +166,8 @@ def process_pdf(pdf_path, client):
 
 def main():
 	ensure_dirs()
-	if useOLLAMA:
-		client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
-	else:
-		api_key = load_api_key()
-		client = OpenAI(base_url=API_BASE_URL, api_key=api_key)
+	api_key = load_api_key()
+	client = OpenAI(base_url=API_BASE_URL, api_key=api_key)
 	pdfs = glob.glob(os.path.join(PDF_DIR, '*.pdf'))
 	if not pdfs:
 		print('No PDF files found in PDFs/.')
